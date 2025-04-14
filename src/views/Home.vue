@@ -17,6 +17,9 @@
       <button @click="router.push('/competencia')" class="pixel-btn w-64">
         Competición
       </button>
+      <button @click="refresh()" class="pixel-btn w-64">
+        Refrescar Api Key
+      </button>
     </div>
     <HeroModalForm v-if="openModal" @close="openModal = false" />
   </div>
@@ -27,9 +30,19 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import HeroModalForm from '@/components/HeroModalForm.vue'
 import backgroundImage from '@/assets/img/menu.webp'
-
+import { heroService } from '@/services/heroService.ts'
 const router = useRouter()
 const openModal = ref(false)
+
+
+const refresh = async () => {
+  try {
+    const response = await heroService.refreshApiKey()
+    console.log('API Key refreshed:', response)
+  } catch (error) {
+    console.error('Error refreshing API Key:', error)
+  }
+}
 </script>
 
 <style scoped>

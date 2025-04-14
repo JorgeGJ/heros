@@ -1,10 +1,28 @@
 const API_KEY = import.meta.env.VITE_API_KEY;
 const BASE_URL = 'https://codetest-api.applivery.io/pentathlon';
-
+let currentApiKey = API_KEY
 export const heroService = {
+  async  refreshApiKey() {
+    const res = await fetch(`https://codetest-api.applivery.io/api-keys/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}), 
+    });
+  
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || 'Error al refrescar la API key');
+    }
+  
+    const data = await res.json();
+    currentApiKey = data.id;
+    return currentApiKey;
+  },
   async getAllHeroes() {
     const res = await fetch(`${BASE_URL}/heroes`, {
-      headers: { authorization: API_KEY },
+      headers: { authorization: currentApiKey },
     });
     if (!res.ok) throw new Error('Error al obtener héroes');
     return await res.json();
@@ -25,7 +43,7 @@ export const heroService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        authorization: API_KEY,
+        authorization: currentApiKey,
       },
       body: JSON.stringify(hero),
     });
